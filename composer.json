@@ -1,0 +1,7 @@
+{
+    "require": {
+        "woocommerce/action-scheduler": "^3.7",
+        "ifsnop/mysqldump-php": "^2.12",
+        "yahnis-elsts/plugin-update-checker": "^5.6"
+    }
+}

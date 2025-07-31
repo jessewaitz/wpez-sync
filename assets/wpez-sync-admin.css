@@ -1,0 +1,40 @@
+hr {
+	clear: both;
+	height: 1px;
+	border: 0;
+	background-color: #ccc;
+}
+
+h3 {
+	width: auto;
+	border-bottom: #ddd solid 1px;
+	margin: 0;
+	padding: 10px 0px 7px;
+	font-weight: 400;
+	font-size: 23px;
+}
+
+a.dashicons {
+	line-height: 1.5;
+	display: inline-block;
+	margin: 0 0 0 5px;
+}
+
+table.wpez-location-headers {
+	width: 500px;
+	border: 0;
+	padding: 0;
+	margin: 0;
+}
+
+table.wpez-location-headers td {
+	border: 0;
+	padding: 0;
+	margin: 0;
+	font-weight: bold;
+	border-collapse: collapse;
+}
+
+.ace_editor {
+	width: 500px;
+}

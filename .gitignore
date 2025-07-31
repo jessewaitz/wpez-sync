@@ -1,0 +1,15 @@
+### FC Git Ignore File ###
+node_modules
+composer.lock
+*.htaccess
+*.DS_Store
+*.vscode
+*[Tt]humbs.db  
+*.Trashes
+*.sql
+*.log
+*.phpcs.xml.dist
+*package.json
+*package-lock.json
+*wp-cli.yml
+*nohup.out
