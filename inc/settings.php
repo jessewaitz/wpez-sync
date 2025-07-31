@@ -95,6 +95,7 @@ class Settings {
 						<a href="#tab-1" data-ref="tab-1" class="nav-tab">Connection</a>
 						<a href="#tab-2" data-ref="tab-2" class="nav-tab">Scripts & Lists</a>
 						<a href="#tab-3" data-ref="tab-3" class="nav-tab">Import/Export</a>
+						<a href="#tab-4" data-ref="tab-4" class="nav-tab">Keys &amp; Tokens</a>
 					</h2>
 					<hr/>
 					<div id="tab-1" class="tab-content">
@@ -159,36 +160,6 @@ class Settings {
 										<br/><span style="font-size:12px; font-style:italic;">Locations should include all instances of this same web site. The live server, your <br/>local installation, and any staging servers. The flag is the short name that will be <br/>used in the wp-cli for designating what remote to connect to (ie. --live). The URL <br/>is the fully qualified URL of the location.</span>
 									</td>
 								</tr>
-								<tr valign="top">
-									<th scope="row">Secret Key:</th>
-									<td>
-										<?php
-										$wpez_sync_secret_key = $wpez_sync_settings['secret_key'] ?? '';
-										echo "<textarea id='wpez_sync_setting_key' name='wpez_sync_settings[secret_key]' rows='3' cols='50'>" . $wpez_sync_secret_key . '</textarea>'; //phpcs:ignore
-										echo '<br/><span style="font-size:12px; font-style:italic;">Keys need to be random and long. We recommend at least 64 characters<br/>long alphanumeric and should include special characters. We recommend<br/>using the wordpress salt generator: https://api.wordpress.org/secret-key/1.1/salt/</span>';
-										?>
-									</td>
-								</tr>
-								<tr valign="top">
-									<th scope="row">Secret Salt:</th>
-									<td>
-										<?php
-										$wpez_sync_secret_salt = $wpez_sync_settings['secret_salt'] ?? '';
-										echo "<textarea id='wpez_sync_setting_salt' name='wpez_sync_settings[secret_salt]' rows='3' cols='50'>" . $wpez_sync_secret_salt . '</textarea>'; //phpcs:ignore
-										echo '<br/><span style="font-size:12px; font-style:italic;">Salts need to be random and long. We recommend at least 64 characters<br/>long alphanumeric and should include special characters. We recommend<br/>using the wordpress salt generator: https://api.wordpress.org/secret-key/1.1/salt/</span>';
-										?>
-									</td>
-								</tr>
-								<tr valign="top">
-									<th scope="row">GitHub Access Token:</th>
-									<td>
-										<?php
-										$wpez_sync_github_access_token = $wpez_sync_settings['github_access_token'] ?? '';
-										echo "<input type='text' id='wpez_sync_setting_github_access_token' name='wpez_sync_settings[github_access_token]' class='regular-text' value='" . esc_attr( $wpez_sync_github_access_token ) . "' />"; //phpcs:ignore
-										echo '<br/><span style="font-size:12px; font-style:italic;">GitHub Access Tokens are generated at your github account at this<br/>URL: https://github.com/settings/tokens</span>';
-										?>
-									</td>
-								</tr>
 							</tbody>	
 						</table>
 					</div>
@@ -245,6 +216,43 @@ class Settings {
 										$server_dl  = home_url() . '/wp-json/wpez/v1/download/';
 										$ch_url     = $server_dl . '?auth_token=' . urlencode( $auth_token ) . '&type=config&file=wpez_config.json';
 										echo '<a class="button button-secondary" href="' . esc_url( $ch_url ) . '">Download Configuration</a>';
+										?>
+									</td>
+								</tr>
+							</tbody>	
+						</table>
+					</div>
+					<div id="tab-4" class="tab-content">
+						<h3>Keys &amp; Tokens</h3>
+						<table class="form-table">
+							<tbody>
+								<tr valign="top">
+									<th scope="row">Secret Key:</th>
+									<td>
+										<?php
+										$wpez_sync_secret_key = $wpez_sync_settings['secret_key'] ?? '';
+										echo "<textarea id='wpez_sync_setting_key' name='wpez_sync_settings[secret_key]' rows='3' cols='50'>" . $wpez_sync_secret_key . '</textarea>'; //phpcs:ignore
+										echo '<br/><span style="font-size:12px; font-style:italic;">Keys need to be random and long. We recommend at least 64 characters<br/>long alphanumeric and should include special characters. We recommend<br/>using the wordpress salt generator: https://api.wordpress.org/secret-key/1.1/salt/</span>';
+										?>
+									</td>
+								</tr>
+								<tr valign="top">
+									<th scope="row">Secret Salt:</th>
+									<td>
+										<?php
+										$wpez_sync_secret_salt = $wpez_sync_settings['secret_salt'] ?? '';
+										echo "<textarea id='wpez_sync_setting_salt' name='wpez_sync_settings[secret_salt]' rows='3' cols='50'>" . $wpez_sync_secret_salt . '</textarea>'; //phpcs:ignore
+										echo '<br/><span style="font-size:12px; font-style:italic;">Salts need to be random and long. We recommend at least 64 characters<br/>long alphanumeric and should include special characters. We recommend<br/>using the wordpress salt generator: https://api.wordpress.org/secret-key/1.1/salt/</span>';
+										?>
+									</td>
+								</tr>
+								<tr valign="top">
+									<th scope="row">GitHub Access Token:</th>
+									<td>
+										<?php
+										$wpez_sync_github_access_token = $wpez_sync_settings['github_access_token'] ?? '';
+										echo "<input type='text' id='wpez_sync_setting_github_access_token' name='wpez_sync_settings[github_access_token]' class='regular-text' value='" . esc_attr( $wpez_sync_github_access_token ) . "' />"; //phpcs:ignore
+										echo '<br/><span style="font-size:12px; font-style:italic;">GitHub Access Tokens are generated at your github account at this<br/>URL: https://github.com/settings/tokens</span>';
 										?>
 									</td>
 								</tr>
