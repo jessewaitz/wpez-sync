@@ -191,6 +191,15 @@ class Sync {
 		);
 		register_rest_route(
 			'wpez/v1',
+			'/upload/',
+			array(
+				'methods'             => 'POST',
+				'callback'            => array( $this, 'wpez_sync_upload' ),
+				'permission_callback' => array( $this, 'wpez_sync_permissions' ),
+			)
+		);
+		register_rest_route(
+			'wpez/v1',
 			'/download/',
 			array(
 				'methods'             => 'GET',
@@ -681,7 +690,7 @@ class Sync {
 		$params     = $data->get_params(); //$sync_tools->logFile("downloader: -- params: ".print_r($params, true));
 		if ( ! empty( $params ) ) {
 			$ul_type    = ( ! empty( $params['type'] ) ) ? $params['type'] : false; //phpcs:ignore
-			$ul_file    = ( ! empty( $params['file'] ) ) ? $params['file'] : false; //phpcs:ignore
+			$ul_file    = ( ! empty( $params['file_name'] ) ) ? $params['file_name'] : false; //phpcs:ignore
 			// for file names, we need to ensure we don't get characters converted in this process
 			if ( strpos( $ul_file, 'base64:' ) === 0 ) {
 				$ul_file = base64_decode( substr( $ul_file, 7 ) );
@@ -722,6 +731,7 @@ class Sync {
 			}
 			// Move the uploaded file to the target directory
 			$target_file = $ul_dir . basename( $ul_file );
+			$sync_tools->logFile( 'target_file: ' . print_r( $target_file, true ), 'wpez-debug.log' );
 			if ( ! move_uploaded_file( $file['tmp_name'], $target_file ) ) {
 				return new WP_Error( 'upload-error', 'Failed to move uploaded file.', array( 'status' => 500 ) );
 			}
