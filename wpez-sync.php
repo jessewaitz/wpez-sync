@@ -7,7 +7,7 @@
  *
  * Plugin Name: WPEZtools Sync
  * Description: Syncing plugin for downloading a copy of the live site to either hot standby or dev versions of the site.
- * Version: 1.0.1
+ * Version: 1.0.1.1
  * Author: Jesse Waitz
  * Author URI: https://www.wpeztools.com
  */
@@ -32,7 +32,7 @@ defined( 'ABSPATH' ) || die( 'No direct access!' );
  * 4. Upgraded all cUrl requests to use Rest API endpoints instead of admin-ajax.
  * 5. Improved settings page to allow for adding multiple remotes, and exporting configurations.
  */
-define( 'WPEZ_SYNC_VERSION', '1.0.1' );
+define( 'WPEZ_SYNC_VERSION', '1.0.1.1' );
 
 $wpez_sync_settings = get_option( 'wpez_sync_settings' ) ?? array();
 define( 'WPEZ_SYNC_SETTINGS', $wpez_sync_settings );

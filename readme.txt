@@ -3,7 +3,7 @@ Contributors: jesse@waitz.com
 Tags: server, sync
 Requires at least: 6.0.0
 Tested up to: 6.0.0
-Stable tag: 1.0.0
+Stable tag: 1.0.1.1
 
 Tools to import wordpress data from another WP Site.
 
