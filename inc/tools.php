@@ -92,6 +92,27 @@ class Tools {
 		return $ch;
 	}
 
+	/**
+	 * Sets up the curl get parameters for uploading files and puts the whole file in one big string
+	 *
+	 * @param string $ch_url url of file to download.
+	 *
+	 * @return \CurlHandle|resource|false
+	 */
+	public function setup_curl_put_data( $ch_url, $file_name, $file_path, $file_mime ) {
+		$ch = curl_init( $ch_url );
+		curl_setopt( $ch, CURLOPT_POST, true );
+		curl_setopt( $ch, CURLOPT_HEADER, 0 );
+		curl_setopt( $ch, CURLOPT_TIMEOUT, 10 );
+		curl_setopt( $ch, CURLOPT_HTTPHEADER, array( 'User-Agent: WPEZ-Sync ' . WPEZ_SYSTEM_USR . '@' . WPEZ_SYSTEM_URL ) );
+		curl_setopt( $ch, CURLOPT_SSL_VERIFYPEER, false ); // Skip SSL Verification
+		curl_setopt( $ch, CURLOPT_SSL_VERIFYHOST, 0 );
+		curl_setopt( $ch, CURLOPT_RETURNTRANSFER, true );
+		curl_setopt( $ch, CURLOPT_POSTFIELDS, array( 'data' => new \CURLFile($file_path, $file_mime, $file_name), ) );
+
+		return $ch;
+	}
+
 
 	// ╔══════════════════════════════════════════════════════════════════════════════════════════════╗
 	// ║  ███    ██  ██████  ███    ██  ██████ ███████     ███████ ███████ ████████ ██    ██ ██████   ║

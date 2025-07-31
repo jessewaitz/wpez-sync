@@ -182,6 +182,15 @@ class Sync {
 		);
 		register_rest_route(
 			'wpez/v1',
+			'/put/',
+			array(
+				'methods'             => 'POST',
+				'callback'            => array( $this, 'wpez_sync_put' ),
+				'permission_callback' => array( $this, 'wpez_sync_permissions' ),
+			)
+		);
+		register_rest_route(
+			'wpez/v1',
 			'/download/',
 			array(
 				'methods'             => 'GET',
@@ -516,6 +525,65 @@ class Sync {
 		}
 	}
 
+	// ╔═════════════════════════════╗
+	// ║  ██████  ██    ██ ████████  ║
+	// ║  ██   ██ ██    ██    ██     ║
+	// ║  ██████  ██    ██    ██     ║
+	// ║  ██      ██    ██    ██     ║
+	// ║  ██       ██████     ██     ║
+	// ╚═════════════════════════════╝
+	/**
+	 * Adds Ajax API Handlers for this plugin.
+	 *
+	 * @param WP_REST_Request $data Options for the function.
+	 *
+	 * @return WP_REST_Response|WP_Error
+	 */
+	public function wpez_sync_put( WP_REST_Request $data ) {
+		$sync_tools = new Tools();
+		$params     = $data->get_params(); //$sync_tools->logFile("fetch: -- params: ".print_r($params, true));
+		if ( ! empty( $params ) ) {
+			$wpez_payload    = ( ! empty( $params['data'] ) ) ? $params['data'] : false; //phpcs:ignore
+			$wpez_data    = json_decode( trim( stripslashes( $wpez_payload ), '\'"' ), true ); //$sync_tools->logFile("handlers: wpez_data: {$wpez_data}");
+			$dl_type      = $wpez_data['type'];
+			$dl_encrypt   = $wpez_data['encrypt'];
+			$dl_gzip      = $wpez_data['gzip'];
+			$user_loc     = WPEZ_SYSTEM_USR . '@' . WPEZ_SYSTEM_URL;
+			// +---------------------------------------------------------------------------------+
+			// | If requested type is data. clear out old dump of table, and generate a new one. |
+			// +---------------------------------------------------------------------------------+
+			if ( $dl_type === 'data' ) {
+				
+
+				// Return created database files name
+				return new \WP_REST_Response(
+					array(
+						'status'  => 'Success',
+						'message' => 'Database Table Uploaded Successfully.',
+					),
+					200
+				);
+			}
+			// +------------------------------------------------------------------------------------+
+			// | If requested type is file. clear out old json file object, and generate a new one. |
+			// +------------------------------------------------------------------------------------+
+			if ( $dl_type === 'files' ) {
+				
+				// Return remote files array file name and md5 hash
+				return new \WP_REST_Response(
+					array(
+						'status'  => 'Success',
+						'message' => 'remote files json -- created successfully.',
+					),
+					200
+				);
+			}
+		} else {
+			// if payload empty return a WordPress error.
+			return new \WP_Error( 'request-empty', 'ERROR: Request was empty.', array( 'status' => 400 ) );
+		}
+	}
+
 	// ╔═════════════════════════════════════════════════════════════════════════════════════════╗
 	// ║  ██████   ██████  ██     ██ ███    ██ ██       ██████   █████  ██████  ███████ ██████   ║
 	// ║  ██   ██ ██    ██ ██     ██ ████   ██ ██      ██    ██ ██   ██ ██   ██ ██      ██   ██  ║
@@ -587,6 +655,80 @@ class Sync {
 			readfile( $filePath );
 			$sync_tools->logFile( "downloader: preparing file: {$dl_file} size {$filesize}" );
 			exit;
+		} else {
+			// if payload empty return a WordPress error.
+			//return new \WP_REST_Response( array( 'status' => 'FAILED', 'message' => 'ERROR: Request was empty.'), 400 );
+			return new \WP_Error( 'request-empty', 'ERROR: Request was empty.', array( 'status' => 400 ) );
+		}
+	}
+
+	// ╔═════════════════════════════════════════════════════════════════════╗
+	// ║  ██    ██ ██████  ██       ██████   █████  ██████  ███████ ██████   ║
+	// ║  ██    ██ ██   ██ ██      ██    ██ ██   ██ ██   ██ ██      ██   ██  ║
+	// ║  ██    ██ ██████  ██      ██    ██ ███████ ██   ██ █████   ██████   ║
+	// ║  ██    ██ ██      ██      ██    ██ ██   ██ ██   ██ ██      ██   ██  ║
+	// ║   ██████  ██      ███████  ██████  ██   ██ ██████  ███████ ██   ██  ║
+	// ╚═════════════════════════════════════════════════════════════════════╝
+	/**
+	 * Upload files from local site using this function.
+	 *
+	 * @param WP_REST_Request $data Options for the function.
+	 *
+	 * @return WP_REST_Response|WP_Error
+	 */
+	public function wpez_sync_upload( WP_REST_Request $data ) {
+		$sync_tools = new Tools();
+		$params     = $data->get_params(); //$sync_tools->logFile("downloader: -- params: ".print_r($params, true));
+		if ( ! empty( $params ) ) {
+			$ul_type    = ( ! empty( $params['type'] ) ) ? $params['type'] : false; //phpcs:ignore
+			$ul_file    = ( ! empty( $params['file'] ) ) ? $params['file'] : false; //phpcs:ignore
+			// for file names, we need to ensure we don't get characters converted in this process
+			if ( strpos( $ul_file, 'base64:' ) === 0 ) {
+				$ul_file = base64_decode( substr( $ul_file, 7 ) );
+			}
+			// get the default WordPress upload directory
+			$ul_dir = WPEZ_UPLOADS_DIR; // default
+			// Set directory for data request
+			if ( $ul_type === 'data' ) {
+				$ul_dir = $sync_tools->get_sync_dir( 'databases' );
+			}
+			// Set directory for json array request
+			if ( $ul_type === 'json' ) {
+				$ul_dir = $sync_tools->get_sync_dir( 'files' );
+			}
+			// Set directory for json array request
+			if ( $ul_type === 'config' ) {
+				$ul_dir = $sync_tools->get_sync_dir( 'config' );
+			}
+			// Set directory for file request
+			if ( $ul_type === 'files' ) {
+				$ul_dir = WPEZ_UPLOADS_DIR;
+			}
+			// decode file and prepare to save on this server.
+			if (empty($_FILES['file'])) {
+				return new WP_REST_Response(['error' => 'No file uploaded'], 400);
+			}
+
+			$file = $_FILES['file'];
+
+			if ($file['error'] !== UPLOAD_ERR_OK) {
+				return new WP_Error('upload-error', 'File upload error: ' . $file['error'], ['status' => 400]);
+			}
+			// Ensure the upload directory exists
+			if ( ! file_exists( $ul_dir ) ) {
+				if ( ! mkdir( $ul_dir, 0755, true ) ) {
+					return new WP_Error( 'upload-error', 'Failed to create upload directory.', array( 'status' => 500 ) );
+				}
+			}
+			// Move the uploaded file to the target directory
+			$target_file = $ul_dir . basename( $ul_file );
+			if ( ! move_uploaded_file( $file['tmp_name'], $target_file ) ) {
+				return new WP_Error( 'upload-error', 'Failed to move uploaded file.', array( 'status' => 500 ) );
+			}
+			// Return the URL of the uploaded file
+			return new WP_REST_Response([
+				'success' => true,
+			]);
 		} else {
 			// if payload empty return a WordPress error.
 			//return new \WP_REST_Response( array( 'status' => 'FAILED', 'message' => 'ERROR: Request was empty.'), 400 );
